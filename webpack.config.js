@@ -1,7 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyESPlugin = require('uglifyjs-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const isDev = process.env.NODE_ENV === 'development';
 
 // 负责将html文档虚拟到根目录下
@@ -9,7 +9,18 @@ let htmlWebpackPlugin = new HtmlWebpackPlugin({
     // 虚拟的html文件名 index.html
     filename: 'index.html',
     // 虚拟html的模板为 src下的index.html
-    template: path.resolve(__dirname, './src/index.html')
+    template: path.resolve(__dirname, './src/index.html'),
+
+    react: isDev ? "https://unpkg.com/react@16/umd/react.development.js" : "https://unpkg.com/react@16/umd/react.production.min.js",
+    react_dom: isDev ? "https://unpkg.com/react-dom@16/umd/react-dom.development.js" : "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js",
+    minify: {
+        collapseWhitespace: !isDev,
+        removeComments: !isDev,
+        removeRedundantAttributes: !isDev,
+        removeScriptTypeAttributes: !isDev,
+        removeStyleLinkTypeAttributes: !isDev,
+        useShortDoctype: !isDev
+    }
 })
 
 module.exports = {
@@ -31,11 +42,9 @@ module.exports = {
                 test: /\.js|jsx$/,
                 exclude: /(node_modules|bower_components)/,
                 use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', "@babel/preset-typescript", "@babel/preset-react"]
-                    }
-                }
+                    loader: 'babel-loader'
+                },
+                include: [path.resolve(__dirname, 'src')]
             },
             {
                 test: /\.ts(x?)$/,
@@ -58,10 +67,10 @@ module.exports = {
     // assume a corresponding global variable exists and use that instead.
     // This is important because it allows us to avoid bundling all of our
     // dependencies, which allows browsers to cache those libraries between builds.
-    // externals: {
-    //     "react": "React",
-    //     "react-dom": "ReactDOM"
-    // },
+    externals: {
+        "react": "React",
+        "react-dom": "ReactDOM"
+    },
     // 配置开发服务器, 并配置自动刷新
     devServer: {
         // 根目录下dist为基本目录
