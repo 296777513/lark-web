@@ -28,7 +28,7 @@ module.exports = {
     entry: "./src/index.tsx",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "main.js"
+        filename: "js/main.js"
     },
     // Enable sourcemaps for debugging webpack's output.
     devtool: isDev ? 'cheap-module-eval-source-map' : "source-map",
