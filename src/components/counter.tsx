@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as ReactDOMServer from 'react-dom/server';
 
 
 export interface Props { compiler: string, framework: string; }
@@ -8,9 +9,13 @@ type State = {
 export class Counter extends React.Component<Props, State>{
     constructor(props: any) {
         super(props);
+        console.log("test1111")
         this.state = {
             number: 0
         };
+        window.document.addEventListener("DOMContentLoaded", () => {
+
+        })
         this.decrease = this.decrease.bind(this);
         this.increase = this.increase.bind(this);
     }
@@ -28,6 +33,7 @@ export class Counter extends React.Component<Props, State>{
 
 
     render() {
+        console.log("test1111")
         return (
             <div>
                 <input type="button" value="减1" onClick={this.decrease} />

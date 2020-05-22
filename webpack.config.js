@@ -36,15 +36,37 @@ module.exports = {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".js"]
     },
+    optimization: {
+        splitChunks: {//分割代码块
+            cacheGroups: {
+                vendor: {
+                    //第三方依赖
+                    priority: 1, //设置优先级，首先抽离第三方模块
+                    name: 'vendor',
+                    test: /node_modules/,
+                    chunks: 'initial',
+                    minSize: 0,
+                    minChunks: 1 //最少引入了1次
+                },
+                //缓存组
+                common: {
+                    //公共模块
+                    chunks: 'initial',
+                    name: 'common',
+                    minSize: 100, //大小超过100个字节
+                    minChunks: 3 //最少引入了3次
+                }
+            }
+        }
+    },
     module: {
         rules: [
             {
-                test: /\.js|jsx$/,
-                exclude: /(node_modules|bower_components)/,
+                test: /\.js|\.jsx|\.ts|\.tsx$/,
+                exclude: /(node_modules)/,
                 use: {
                     loader: 'babel-loader'
-                },
-                include: [path.resolve(__dirname, 'src')]
+                }
             },
             {
                 test: /\.ts(x?)$/,
@@ -76,11 +98,11 @@ module.exports = {
         // 根目录下dist为基本目录
         contentBase: path.join(__dirname, 'dist'),
         // 自动压缩代码
-        compress: true,
+        compress: false,
         // 服务端口为1208
         port: 3000,
         // 自动打开浏览器
-        open: true
+        open: true,
     },
     // 装载虚拟目录插件
     plugins: [
@@ -89,21 +111,21 @@ module.exports = {
         new UglifyESPlugin({
             // 多嵌套了一层
             uglifyOptions: {
-                compress: {
+                ccompress: {
                     // 在UglifyJs删除没有用到的代码时不输出警告
-                    warnings: false,
+                    warnings: isDev,
                     // 删除所有的 `console` 语句，可以兼容ie浏览器
-                    drop_console: true,
+                    drop_console: !isDev,
                     // 内嵌定义了但是只用到一次的变量
-                    collapse_vars: true,
+                    collapse_vars: !isDev,
                     // 提取出出现多次但是没有定义成变量去引用的静态值
-                    reduce_vars: true,
+                    reduce_vars: !isDev,
                 },
                 output: {
                     // 最紧凑的输出
-                    beautify: false,
+                    beautify: isDev,
                     // 删除所有的注释
-                    comments: false,
+                    comments: isDev,
                 }
             }
         })
